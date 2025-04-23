@@ -1,0 +1,125 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using Microsoft.VisualBasic; // InputBox 用
+
+namespace DiffGridDemo
+{
+    /// <summary>
+    /// DataGridView 上で
+    ///   ・行を削除しても欠番を保持
+    ///   ・行追加時は「最後に採番した番号 + 1」を付与し欠番を再利用しない
+    /// を実現するサンプル。
+    /// </summary>
+    public partial class MainForm : Form
+    {
+        /// <summary>
+        /// BOM_SID ごとの「最後に採番したシーケンス番号」を保持する辞書。
+        /// </summary>
+        private readonly Dictionary<int, int> lastSeqDict = new Dictionary<int, int>();
+
+        public MainForm()
+        {
+            InitializeComponent();
+
+            CreateColumns();      // 列を定義する
+            LoadSampleData();     // 初期データを投入し、lastSeqDict を更新
+
+            // ボタンにイベントをひも付け
+            btnAdd.Click    += OnAddClicked;
+            btnDelete.Click += OnDeleteClicked;
+        }
+
+        //──────────────────────── 列定義 ────────────────────────
+        private void CreateColumns()
+        {
+            grid.Columns.Add("BOM_SID",    "BOM_SID");
+            grid.Columns.Add("シーケンス", "シーケンス");
+            grid.Columns.Add("当期金額",   "当期金額");
+            grid.Columns.Add("出品数",     "出品数");
+
+            // 数値列を右寄せ
+            grid.Columns["当期金額"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            grid.Columns["出品数"].DefaultCellStyle.Alignment   = DataGridViewContentAlignment.MiddleRight;
+        }
+
+        //────────────────────── サンプルデータ ───────────────────
+        private void LoadSampleData()
+        {
+            // 行追加
+            AddRowInternal(5000, 1, 100m, 50);
+            AddRowInternal(5000, 2, 300m, 70);
+            AddRowInternal(5000, 3, 500m, 10);
+        }
+
+        /// <summary>
+        /// grid と lastSeqDict の両方を更新する内部ヘルパー。
+        /// </summary>
+        private void AddRowInternal(int bomSid, int sequence, decimal amount, int quantity)
+        {
+            grid.Rows.Add(bomSid, sequence, amount, quantity);
+
+            // 最終採番値を更新（削除時は更新しない）
+            if (!lastSeqDict.ContainsKey(bomSid) || lastSeqDict[bomSid] < sequence)
+                lastSeqDict[bomSid] = sequence;
+        }
+
+        //──────────────────────── 行追加処理 ────────────────────────
+        private void OnAddClicked(object sender, EventArgs e)
+        {
+            // ▼ 1. 入力ダイアログで値を取得（超簡素）
+            if (!TryInput("BOM_SID を整数で入力", out int bomSid))       return;
+            if (!TryInput("当期金額を入力",        out decimal amount))   return;
+            if (!TryInput("出品数を整数で入力",    out int quantity))     return;
+
+            // ▼ 2. 採番処理
+            //    - 辞書に値があれば +1
+            //    - 無ければ 1
+            int nextSeq = lastSeqDict.TryGetValue(bomSid, out int lastSeq)
+                        ? lastSeq + 1
+                        : 1;
+
+            // ▼ 3. 行追加 と 採番履歴更新
+            AddRowInternal(bomSid, nextSeq, amount, quantity);
+        }
+
+        //──────────────────────── 行削除処理 ────────────────────────
+        private void OnDeleteClicked(object sender, EventArgs e)
+        {
+            if (grid.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("削除したい行を選択してください");
+                return;
+            }
+
+            // 今回は単一行のみ削除（複数選択対応したい場合はループで OK）
+            grid.Rows.Remove(grid.SelectedRows[0]);
+
+            // ★注意★
+            //  lastSeqDict は更新しない（番号を戻さない）
+            //  → 欠番が永久に残り、再利用されない
+        }
+
+        //───────────────────── 汎用入力ダイアログ ──────────────────
+        private static bool TryInput<T>(string prompt, out T value)
+        {
+            value = default;
+            string text = Interaction.InputBox(prompt, "入力", "");
+
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            try
+            {
+                value = (T)Convert.ChangeType(text, typeof(T));
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("入力形式が正しくありません");
+                return false;
+            }
+        }
+    }
+}
