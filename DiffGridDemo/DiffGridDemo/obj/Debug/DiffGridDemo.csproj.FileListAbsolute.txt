@@ -1,0 +1,12 @@
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGridDemo.csproj.AssemblyReference.cache
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGridDemo.Properties.Resources.resources
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGridDemo.csproj.GenerateResource.cache
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGridDemo.csproj.CoreCompileInputs.cache
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\bin\Debug\DiffGridDemo.exe.config
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\bin\Debug\DiffGridDemo.exe
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\bin\Debug\DiffGridDemo.pdb
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\bin\Debug\DiffPlex.dll
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\bin\Debug\DiffPlex.xml
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGrid.6A9E9583.Up2Date
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGridDemo.exe
+D:\JOBS\SRC\DiffGridDemo\DiffGridDemo\obj\Debug\DiffGridDemo.pdb
